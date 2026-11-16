@@ -200,3 +200,43 @@ def test_sklearn_analyzer_thread_safe_concurrent_update() -> None:
     t1.join(timeout=5)
     t2.join(timeout=5)
     assert errors == []
+
+
+def test_sklearn_analyzer_predict_exception_falls_back_to_heuristic(
+    caplog: pytest.LogCaptureFixture,
+) -> None:
+    class FailingClassifier:
+        def predict(self, x: object) -> object:
+            raise RuntimeError("Corrupted weights or feature mismatch")
+
+    analyzer = SklearnPedagogicalAnalyzer()
+    analyzer.update_model(FailingClassifier())
+    assert analyzer.is_trained is True
+
+    math = Subject(id=uuid4(), name="Matemáticas")
+    topic = Topic(id=uuid4(), subject_id=math.id, name="Álgebra")
+    ex_type = ExerciseType(id=uuid4(), topic_id=topic.id, name="Ecuaciones")
+    catalog = AcademicCatalogSnapshot(subjects=[math], topics=[topic], exercise_types=[ex_type])
+    student = Student(id=uuid4(), full_name="Sergio", academic_level="ESO")
+    session = TutoringSession(
+        id=uuid4(),
+        student_id=student.id,
+        occurred_at=datetime(2026, 11, 16, 17, 0, tzinfo=timezone.utc),
+        duration_minutes=60,
+        attempts=[ExerciseAttempt(ex_type.id, AttemptOutcome.FAILURE, ErrorCause.CONCEPT)],
+    )
+
+    with caplog.at_level("WARNING"):
+        diagnostic = analyzer.analyze(
+            student=student,
+            sessions=[session],
+            catalog=catalog,
+            reference_date=date(2026, 11, 16),
+        )
+
+    # Cleanly falls back to heuristic diagnostic
+    assert diagnostic.analyzer_name == "HeuristicPedagogicalAnalyzerV1"
+    assert len(diagnostic.subject_priorities) == 1
+    assert diagnostic.subject_priorities[0].subject_name == "Matemáticas"
+    assert any("Classifier prediction failed" in record.message or "prediction" in record.message for record in caplog.records)
+

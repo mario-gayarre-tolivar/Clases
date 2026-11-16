@@ -1,5 +1,6 @@
 """Machine learning adapter implementing PedagogicalAnalyzerPort using scikit-learn."""
 
+import logging
 import threading
 from collections.abc import Sequence
 from datetime import date
@@ -107,7 +108,13 @@ class SklearnPedagogicalAnalyzer(PedagogicalAnalyzerPort):
                 reference_date=reference_date,
             )
             # Predict urgency / priority class (1 = High focus, 0 = Normal)
-            prediction = classifier.predict([list(feat_vec.values)])[0]
+            try:
+                prediction = classifier.predict([list(feat_vec.values)])[0]
+            except Exception as exc:
+                logging.getLogger(__name__).warning(
+                    "Classifier prediction failed; falling back to base diagnostic: %s", exc
+                )
+                return base_diagnostic
             ml_bonus = 20.0 if prediction == 1 else 0.0
             adjusted_score = round(min(100.0, p.priority_score + ml_bonus), 2)
             ml_reason = (

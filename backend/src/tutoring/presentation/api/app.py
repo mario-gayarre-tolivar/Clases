@@ -162,7 +162,7 @@ def create_app(
     @asynccontextmanager
     async def lifespan(app: FastAPI) -> AsyncIterator[None]:
         yield
-        training_coordinator.shutdown(wait=False)
+        training_coordinator.shutdown(wait=True)
         try:
             conn.close()
         except Exception:

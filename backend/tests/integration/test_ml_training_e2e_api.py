@@ -1,12 +1,14 @@
 """End-to-end integration tests for automatic ML training pipeline via FastAPI."""
 
+import threading
+import time
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 import pytest
 from httpx import ASGITransport, AsyncClient
 
-from tutoring.infrastructure.ml.trainer import TrainingStatus
+from tutoring.infrastructure.ml.trainer import TrainingReport, TrainingStatus
 from tutoring.presentation.api.app import create_app
 
 
@@ -89,3 +91,54 @@ async def test_e2e_api_auto_trains_model_and_skips_empty_session_retrain(tmp_pat
             app2.state.training_coordinator.shutdown(wait=True)
     finally:
         app.state.training_coordinator.shutdown(wait=True)
+
+
+@pytest.mark.asyncio
+async def test_lifespan_shutdown_waits_for_in_flight_training_without_sqlite_errors(
+    tmp_path: Path,
+) -> None:
+    db_file = tmp_path / "tutoring_lifespan.sqlite3"
+    app = create_app(
+        db_path=str(db_file),
+        model_dir=tmp_path / "models",
+        debounce_seconds=0.001,
+        burst_threshold=1,
+    )
+
+    errors: list[Exception] = []
+    in_flight_started = threading.Event()
+    orig_train = app.state.training_coordinator._trainer.train_and_activate
+
+    def slow_train() -> TrainingReport:
+        in_flight_started.set()
+        try:
+            time.sleep(0.05)
+            return orig_train()
+        except Exception as exc:
+            errors.append(exc)
+            raise
+
+    app.state.training_coordinator._trainer.train_and_activate = slow_train
+
+    async with app.router.lifespan_context(app):
+        async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+            sub = (await client.post("/api/catalog/subjects", json={"name": "Física"})).json()["id"]
+            top = (await client.post("/api/catalog/topics", json={"subject_id": sub, "name": "Cinemática"})).json()["id"]
+            ex = (await client.post("/api/catalog/exercise-types", json={"topic_id": top, "name": "MRU"})).json()["id"]
+            st = (await client.post("/api/students", json={"full_name": "Laura", "academic_level": "1º Bach"})).json()["id"]
+            await client.post(
+                f"/api/students/{st}/sessions",
+                json={
+                    "occurred_at": "2026-11-16T10:00:00Z",
+                    "duration_minutes": 60,
+                    "attempts": [{"exercise_type_id": ex, "outcome": "SUCCESS"}],
+                },
+            )
+        assert in_flight_started.wait(timeout=2.0)
+
+    # With wait=True on shutdown, the in-flight job completes before conn.close().
+    # No SQLite ProgrammingError on closed connection occurs.
+    time.sleep(0.08)
+    assert errors == []
+
+
