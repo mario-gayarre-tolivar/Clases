@@ -2,7 +2,7 @@
 
 > God node · 41 connections · `backend/src/tutoring/domain/value_objects/attempt.py`
 
-**Community:** [Community 5](Community_5.md)
+**Community:** [Community 3](Community_3.md)
 
 ## Connections by Relation
 

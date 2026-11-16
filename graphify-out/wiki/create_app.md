@@ -2,7 +2,7 @@
 
 > God node · 49 connections · `backend/src/tutoring/presentation/api/app.py`
 
-**Community:** [Community 28](Community_28.md)
+**Community:** [Community 0](Community_0.md)
 
 ## Connections by Relation
 

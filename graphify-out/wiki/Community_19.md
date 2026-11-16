@@ -1,59 +1,39 @@
 # Community 19
 
-> 31 nodes · cohesion 0.10
+> 8 nodes · cohesion 0.39
 
 ## Key Concepts
 
-- **showToast()** (33 connections) — `.agents/skills/impeccable/scripts/live-browser.js`
-- **mountSvelteComponentVariant()** (16 connections) — `.agents/skills/impeccable/scripts/live-browser.js`
-- **sendEvent()** (15 connections) — `.agents/skills/impeccable/scripts/live-browser.js`
-- **handleDiscard()** (8 connections) — `.agents/skills/impeccable/scripts/live-browser.js`
-- **markSessionHandled()** (8 connections) — `.agents/skills/impeccable/scripts/live-browser.js`
-- **commitAcceptedSvelteComponentToDom()** (7 connections) — `.agents/skills/impeccable/scripts/live-browser.js`
-- **discardOrphanedSession()** (7 connections) — `.agents/skills/impeccable/scripts/live-browser.js`
-- **maybeCompleteAcceptedSession()** (7 connections) — `.agents/skills/impeccable/scripts/live-browser.js`
-- **findLiveElementForSvelteManifest()** (6 connections) — `.agents/skills/impeccable/scripts/live-browser.js`
-- **abandonForeignSession()** (5 connections) — `.agents/skills/impeccable/scripts/live-browser.js`
-- **abandonSupersededGo()** (5 connections) — `.agents/skills/impeccable/scripts/live-browser.js`
-- **componentModuleCandidates()** (5 connections) — `.agents/skills/impeccable/scripts/live-browser.js`
-- **isSvelteInsertManifest()** (5 connections) — `.agents/skills/impeccable/scripts/live-browser.js`
-- **probeJsxWrapperForOrphan()** (5 connections) — `.agents/skills/impeccable/scripts/live-browser.js`
-- **applyOriginalAttrsToSvelteAnchor()** (4 connections) — `.agents/skills/impeccable/scripts/live-browser.js`
-- **dismissToast()** (4 connections) — `.agents/skills/impeccable/scripts/live-browser.js`
-- **findInsertAnchorInDom()** (4 connections) — `.agents/skills/impeccable/scripts/live-browser.js`
-- **importFirstReachable()** (4 connections) — `.agents/skills/impeccable/scripts/live-browser.js`
-- **loadSvelteRuntime()** (4 connections) — `.agents/skills/impeccable/scripts/live-browser.js`
-- **maybeCompleteSteer()** (4 connections) — `.agents/skills/impeccable/scripts/live-browser.js`
-- **maybePrefetchPage()** (4 connections) — `.agents/skills/impeccable/scripts/live-browser.js`
-- **maybeWarnConditionalAncestor()** (4 connections) — `.agents/skills/impeccable/scripts/live-browser.js`
-- **probePreviewTree()** (4 connections) — `.agents/skills/impeccable/scripts/live-browser.js`
-- **removeSvelteComponentVariantStyle()** (4 connections) — `.agents/skills/impeccable/scripts/live-browser.js`
-- **reportVariantMountFailed()** (4 connections) — `.agents/skills/impeccable/scripts/live-browser.js`
-- *... and 6 more nodes in this community*
+- **ExamGoal** (36 connections) — `backend/src/tutoring/domain/value_objects/exam_goal.py`
+- **.is_upcoming()** (7 connections) — `backend/src/tutoring/domain/value_objects/exam_goal.py`
+- **.days_remaining()** (5 connections) — `backend/src/tutoring/domain/value_objects/exam_goal.py`
+- **test_exam_goal_validates_title_and_computes_days_remaining()** (4 connections) — `backend/tests/unit/domain/test_student_entity.py`
+- **date** (2 connections)
+- **Immutable target exam linked to a subject and optional specific topics.** (1 connections) — `backend/src/tutoring/domain/value_objects/exam_goal.py`
+- **Return signed days between reference_date and exam_date.** (1 connections) — `backend/src/tutoring/domain/value_objects/exam_goal.py`
+- **Return True if exam occurs within [0, horizon_days] from reference_date.** (1 connections) — `backend/src/tutoring/domain/value_objects/exam_goal.py`
 
 ## Relationships
 
-- [Community 16](Community_16.md) (30 shared connections)
-- [Community 0](Community_0.md) (22 shared connections)
-- [Community 15](Community_15.md) (11 shared connections)
-- [Community 7](Community_7.md) (8 shared connections)
-- [Community 22](Community_22.md) (6 shared connections)
-- [Community 6](Community_6.md) (5 shared connections)
-- [Community 36](Community_36.md) (4 shared connections)
-- [Community 10](Community_10.md) (3 shared connections)
-- [Community 32](Community_32.md) (2 shared connections)
-- [Community 38](Community_38.md) (2 shared connections)
-- [Community 21](Community_21.md) (2 shared connections)
-- [Community 34](Community_34.md) (2 shared connections)
+- [Community 4](Community_4.md) (10 shared connections)
+- [Community 2](Community_2.md) (8 shared connections)
+- [Community 11](Community_11.md) (4 shared connections)
+- [Community 15](Community_15.md) (4 shared connections)
+- [Community 0](Community_0.md) (3 shared connections)
+- [Community 1](Community_1.md) (3 shared connections)
+- [Community 12](Community_12.md) (1 shared connections)
+- [Community 10](Community_10.md) (1 shared connections)
+- [Community 5](Community_5.md) (1 shared connections)
 
 ## Source Files
 
-- `.agents/skills/impeccable/scripts/live-browser.js`
+- `backend/src/tutoring/domain/value_objects/exam_goal.py`
+- `backend/tests/unit/domain/test_student_entity.py`
 
 ## Audit Trail
 
-- EXTRACTED: 144 (99%)
-- INFERRED: 1 (1%)
+- EXTRACTED: 29 (63%)
+- INFERRED: 17 (37%)
 - AMBIGUOUS: 0 (0%)
 
 ---

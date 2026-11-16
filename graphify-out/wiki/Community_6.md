@@ -1,58 +1,51 @@
 # Community 6
 
-> 55 nodes · cohesion 0.07
+> 46 nodes · cohesion 0.06
 
 ## Key Concepts
 
-- **el()** (29 connections) — `.agents/skills/impeccable/scripts/live-browser.js`
-- **buildInsertConfigureRow()** (28 connections) — `.agents/skills/impeccable/scripts/live-browser.js`
-- **buildConfigureRow()** (24 connections) — `.agents/skills/impeccable/scripts/live-browser.js`
-- **showBar()** (23 connections) — `.agents/skills/impeccable/scripts/live-browser.js`
-- **updateBarContent()** (20 connections) — `.agents/skills/impeccable/scripts/live-browser.js`
-- **buildCyclingRow()** (15 connections) — `.agents/skills/impeccable/scripts/live-browser.js`
-- **buildSelectionPill()** (12 connections) — `.agents/skills/impeccable/scripts/live-browser.js`
-- **configureBarPalette()** (10 connections) — `.agents/skills/impeccable/scripts/live-browser.js`
-- **syncInsertCreateButton()** (9 connections) — `.agents/skills/impeccable/scripts/live-browser.js`
-- **buildConfigureCountControl()** (7 connections) — `.agents/skills/impeccable/scripts/live-browser.js`
-- **buildGeneratingRow()** (7 connections) — `.agents/skills/impeccable/scripts/live-browser.js`
-- **showConfigureBarTooltip()** (7 connections) — `.agents/skills/impeccable/scripts/live-browser.js`
-- **buildConfigureActionControl()** (6 connections) — `.agents/skills/impeccable/scripts/live-browser.js`
-- **syncCyclingControls()** (6 connections) — `.agents/skills/impeccable/scripts/live-browser.js`
-- **bindConfigureCountPillTooltip()** (5 connections) — `.agents/skills/impeccable/scripts/live-browser.js`
-- **buildDots()** (5 connections) — `.agents/skills/impeccable/scripts/live-browser.js`
-- **configureInlineControlStyle()** (5 connections) — `.agents/skills/impeccable/scripts/live-browser.js`
-- **configureRowTextMetrics()** (5 connections) — `.agents/skills/impeccable/scripts/live-browser.js`
-- **ensureCyclingRenderable()** (5 connections) — `.agents/skills/impeccable/scripts/live-browser.js`
-- **touchPrimary()** (5 connections) — `.agents/skills/impeccable/scripts/live-browser.js`
-- **applyConfigureBarChrome()** (4 connections) — `.agents/skills/impeccable/scripts/live-browser.js`
-- **bindConfigureInlineControlHover()** (4 connections) — `.agents/skills/impeccable/scripts/live-browser.js`
-- **buildConfigureSubmitButton()** (4 connections) — `.agents/skills/impeccable/scripts/live-browser.js`
-- **buildConfigureTrailingCluster()** (4 connections) — `.agents/skills/impeccable/scripts/live-browser.js`
-- **buildConfigureVoiceButton()** (4 connections) — `.agents/skills/impeccable/scripts/live-browser.js`
-- *... and 30 more nodes in this community*
+- **package.json** (24 connections) — `frontend/package.json`
+- **devDependencies** (16 connections) — `frontend/package.json`
+- **scripts** (7 connections) — `frontend/package.json`
+- **dependencies** (3 connections) — `frontend/package.json`
+- **react-dom** (3 connections) — `frontend/package.json`
+- **@testing-library/jest-dom** (3 connections) — `frontend/package.json`
+- **vite** (3 connections) — `frontend/package.json`
+- **@vitejs/plugin-react** (3 connections) — `frontend/package.json`
+- **react@^18.3.1** (2 connections) — `frontend/package.json`
+- **react-dom@^18.3.1** (2 connections) — `frontend/package.json`
+- **eslint@^9.9.0** (2 connections) — `frontend/package.json`
+- **@eslint/js@^9.9.0** (2 connections) — `frontend/package.json`
+- **eslint-plugin-react-hooks@^5.1.0-rc.0** (2 connections) — `frontend/package.json`
+- **eslint-plugin-react-refresh@^0.4.9** (2 connections) — `frontend/package.json`
+- **globals@^15.9.0** (2 connections) — `frontend/package.json`
+- **jsdom@^25.0.0** (2 connections) — `frontend/package.json`
+- **@testing-library/jest-dom@^6.5.0** (2 connections) — `frontend/package.json`
+- **@testing-library/react@^16.0.1** (2 connections) — `frontend/package.json`
+- **@testing-library/user-event@^14.5.2** (2 connections) — `frontend/package.json`
+- **@types/react@^18.3.3** (2 connections) — `frontend/package.json`
+- **@types/react-dom@^18.3.0** (2 connections) — `frontend/package.json`
+- **typescript@^5.5.3** (2 connections) — `frontend/package.json`
+- **vite@^5.4.1** (2 connections) — `frontend/package.json`
+- **@vitejs/plugin-react@^4.3.1** (2 connections) — `frontend/package.json`
+- **vitest@^2.0.5** (2 connections) — `frontend/package.json`
+- *... and 21 more nodes in this community*
 
 ## Relationships
 
-- [Community 16](Community_16.md) (57 shared connections)
-- [Community 7](Community_7.md) (18 shared connections)
-- [Community 0](Community_0.md) (16 shared connections)
-- [Community 14](Community_14.md) (13 shared connections)
-- [Community 15](Community_15.md) (7 shared connections)
-- [Community 36](Community_36.md) (5 shared connections)
-- [Community 19](Community_19.md) (5 shared connections)
-- [Community 21](Community_21.md) (3 shared connections)
-- [Community 34](Community_34.md) (2 shared connections)
-- [Community 10](Community_10.md) (1 shared connections)
-- [Community 35](Community_35.md) (1 shared connections)
+- [Community 9](Community_9.md) (6 shared connections)
+- [Community 14](Community_14.md) (3 shared connections)
 
 ## Source Files
 
-- `.agents/skills/impeccable/scripts/live-browser.js`
+- `frontend/package.json`
+- `frontend/src/setupTests.ts`
+- `frontend/vite.config.ts`
 
 ## Audit Trail
 
-- EXTRACTED: 237 (100%)
-- INFERRED: 1 (0%)
+- EXTRACTED: 68 (100%)
+- INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 
 ---

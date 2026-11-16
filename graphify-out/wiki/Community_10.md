@@ -1,59 +1,57 @@
 # Community 10
 
-> 42 nodes · cohesion 0.06
+> 23 nodes · cohesion 0.12
 
 ## Key Concepts
 
-- **applyEditing()** (21 connections) — `.agents/skills/impeccable/scripts/live-browser.js`
-- **documentRefForElement()** (9 connections) — `.agents/skills/impeccable/scripts/live-browser.js`
-- **normalizeManualContextText()** (8 connections) — `.agents/skills/impeccable/scripts/live-browser.js`
-- **enableInlineEdit()** (6 connections) — `.agents/skills/impeccable/scripts/live-browser.js`
-- **restoreDiscardedManualEdits()** (6 connections) — `.agents/skills/impeccable/scripts/live-browser.js`
-- **walk()** (5 connections) — `.agents/skills/impeccable/scripts/live-browser.js`
-- **copyEditContainerContext()** (5 connections) — `.agents/skills/impeccable/scripts/live-browser.js`
-- **copyEditLeafContext()** (5 connections) — `.agents/skills/impeccable/scripts/live-browser.js`
-- **own()** (5 connections) — `.agents/skills/impeccable/scripts/live-browser-dom.js`
-- **findManualEditRestoreElement()** (5 connections) — `.agents/skills/impeccable/scripts/live-browser.js`
-- **onPendingTrashClick()** (5 connections) — `.agents/skills/impeccable/scripts/live-browser.js`
-- **queryManualEditRef()** (5 connections) — `.agents/skills/impeccable/scripts/live-browser.js`
-- **removalOriginalText()** (5 connections) — `.agents/skills/impeccable/scripts/live-browser.js`
-- **restoreMixedTextNodeManualEdit()** (5 connections) — `.agents/skills/impeccable/scripts/live-browser.js`
-- **sanitizedContextClone()** (5 connections) — `.agents/skills/impeccable/scripts/live-browser.js`
-- **collectEditableTextRows()** (4 connections) — `.agents/skills/impeccable/scripts/live-browser.js`
-- **visit()** (4 connections) — `.agents/skills/impeccable/scripts/live-browser.js`
-- **contextElementForManualEdit()** (4 connections) — `.agents/skills/impeccable/scripts/live-browser.js`
-- **cssIdent()** (4 connections) — `.agents/skills/impeccable/scripts/live-browser.js`
-- **stopFocusOutIntoChrome()** (4 connections) — `.agents/skills/impeccable/scripts/live-browser-dom.js`
-- **mixedTextWrapRestoreHint()** (4 connections) — `.agents/skills/impeccable/scripts/live-browser.js`
-- **nearbyEditableTextsForManualEdit()** (4 connections) — `.agents/skills/impeccable/scripts/live-browser.js`
-- **sourceHintForElement()** (4 connections) — `.agents/skills/impeccable/scripts/live-browser.js`
-- **stripManualEditRuntimeState()** (4 connections) — `.agents/skills/impeccable/scripts/live-browser.js`
-- **wrapMixedContentTextNodes()** (4 connections) — `.agents/skills/impeccable/scripts/live-browser.js`
-- *... and 17 more nodes in this community*
+- **diagnostic.py** (16 connections) — `backend/src/tutoring/domain/value_objects/diagnostic.py`
+- **SklearnPedagogicalAnalyzer** (16 connections) — `backend/src/tutoring/infrastructure/ml/sklearn_analyzer.py`
+- **StudentDiagnostic** (13 connections) — `backend/src/tutoring/domain/value_objects/diagnostic.py`
+- **SubjectPriority** (12 connections) — `backend/src/tutoring/domain/value_objects/diagnostic.py`
+- **StudentDiagnosticDTO** (10 connections) — `backend/src/tutoring/application/dtos.py`
+- **value_objects/__init__.py** (10 connections) — `backend/src/tutoring/domain/value_objects/__init__.py`
+- **.analyze()** (10 connections) — `backend/src/tutoring/infrastructure/ml/sklearn_analyzer.py`
+- **WeakExerciseType** (9 connections) — `backend/src/tutoring/domain/value_objects/diagnostic.py`
+- **ExamAlert** (8 connections) — `backend/src/tutoring/domain/value_objects/diagnostic.py`
+- **dataclasses** (8 connections)
+- **.__init__()** (4 connections) — `backend/src/tutoring/infrastructure/ml/sklearn_analyzer.py`
+- **.fit()** (3 connections) — `backend/src/tutoring/infrastructure/ml/sklearn_analyzer.py`
+- **Any** (1 connections)
+- **Diagnostic output value objects produced by pedagogical analyzers.** (1 connections) — `backend/src/tutoring/domain/value_objects/diagnostic.py`
+- **Ranked focus recommendation for a single academic subject.** (1 connections) — `backend/src/tutoring/domain/value_objects/diagnostic.py`
+- **Exercise category exhibiting notable failure rate and dominant error cause.** (1 connections) — `backend/src/tutoring/domain/value_objects/diagnostic.py`
+- **Readiness alert for an upcoming exam goal.** (1 connections) — `backend/src/tutoring/domain/value_objects/diagnostic.py`
+- **Complete deterministic or ML-backed diagnostic for a student.** (1 connections) — `backend/src/tutoring/domain/value_objects/diagnostic.py`
+- **Domain value objects.** (1 connections) — `backend/src/tutoring/domain/value_objects/__init__.py`
+- **date** (1 connections)
+- **Classical ML adapter using scikit-learn with safe fallback to heuristic…** (1 connections) — `backend/src/tutoring/infrastructure/ml/sklearn_analyzer.py`
+- **Train the underlying classical classifier on tabular feature vectors.** (1 connections) — `backend/src/tutoring/infrastructure/ml/sklearn_analyzer.py`
+- **Produce diagnostic using classical ML model or safe heuristic fallback.** (1 connections) — `backend/src/tutoring/infrastructure/ml/sklearn_analyzer.py`
 
 ## Relationships
 
-- [Community 16](Community_16.md) (37 shared connections)
-- [Community 7](Community_7.md) (11 shared connections)
-- [Community 15](Community_15.md) (4 shared connections)
-- [Community 0](Community_0.md) (4 shared connections)
-- [Community 19](Community_19.md) (3 shared connections)
-- [Community 30](Community_30.md) (3 shared connections)
-- [Community 14](Community_14.md) (3 shared connections)
-- [Community 22](Community_22.md) (2 shared connections)
-- [Community 48](Community_48.md) (2 shared connections)
-- [Community 6](Community_6.md) (1 shared connections)
-- [Community 42](Community_42.md) (1 shared connections)
+- [Community 5](Community_5.md) (12 shared connections)
+- [Community 12](Community_12.md) (10 shared connections)
+- [Community 15](Community_15.md) (10 shared connections)
+- [Community 0](Community_0.md) (8 shared connections)
+- [Community 2](Community_2.md) (8 shared connections)
+- [Community 1](Community_1.md) (8 shared connections)
+- [Community 3](Community_3.md) (6 shared connections)
+- [Community 11](Community_11.md) (3 shared connections)
+- [Community 4](Community_4.md) (2 shared connections)
+- [Community 19](Community_19.md) (1 shared connections)
 
 ## Source Files
 
-- `.agents/skills/impeccable/scripts/live-browser-dom.js`
-- `.agents/skills/impeccable/scripts/live-browser.js`
+- `backend/src/tutoring/application/dtos.py`
+- `backend/src/tutoring/domain/value_objects/__init__.py`
+- `backend/src/tutoring/domain/value_objects/diagnostic.py`
+- `backend/src/tutoring/infrastructure/ml/sklearn_analyzer.py`
 
 ## Audit Trail
 
-- EXTRACTED: 117 (91%)
-- INFERRED: 11 (9%)
+- EXTRACTED: 73 (74%)
+- INFERRED: 26 (26%)
 - AMBIGUOUS: 0 (0%)
 
 ---

@@ -1,63 +1,55 @@
 # Community 12
 
-> 41 nodes · cohesion 0.10
+> 19 nodes · cohesion 0.18
 
 ## Key Concepts
 
-- **TutoringSession** (65 connections) — `backend/src/tutoring/domain/entities/session.py`
-- **fakes.py** (24 connections) — `backend/src/tutoring/application/fakes.py`
-- **SqliteSessionRepository** (15 connections) — `backend/src/tutoring/infrastructure/persistence/sqlite_session_repo.py`
-- **._to_dto()** (13 connections) — `backend/src/tutoring/application/use_cases/record_session.py`
-- **InMemorySessionRepository** (11 connections) — `backend/src/tutoring/application/fakes.py`
-- **.save()** (9 connections) — `backend/src/tutoring/infrastructure/persistence/sqlite_session_repo.py`
-- **test_in_memory_session_repository()** (9 connections) — `backend/tests/unit/application/test_fakes.py`
-- **test_session_normalizes_notes_and_exposes_immutable_attempts()** (9 connections) — `backend/tests/unit/domain/test_session_entity.py`
-- **._hydrate_session()** (8 connections) — `backend/src/tutoring/infrastructure/persistence/sqlite_session_repo.py`
-- **.id()** (7 connections) — `backend/src/tutoring/domain/entities/session.py`
-- **.attempts()** (6 connections) — `backend/src/tutoring/domain/entities/session.py`
-- **.failure_rate()** (5 connections) — `backend/src/tutoring/domain/entities/session.py`
-- **.__init__()** (5 connections) — `backend/src/tutoring/domain/entities/session.py`
-- **.update_duration()** (5 connections) — `backend/src/tutoring/domain/entities/session.py`
-- **.get_by_id()** (5 connections) — `backend/src/tutoring/infrastructure/persistence/sqlite_session_repo.py`
-- **.list_by_student()** (5 connections) — `backend/src/tutoring/infrastructure/persistence/sqlite_session_repo.py`
-- **.get_by_id()** (4 connections) — `backend/src/tutoring/application/fakes.py`
-- **.list_by_student()** (4 connections) — `backend/src/tutoring/application/fakes.py`
-- **.save()** (4 connections) — `backend/src/tutoring/application/fakes.py`
-- **UUID** (4 connections)
-- **.duration_minutes()** (4 connections) — `backend/src/tutoring/domain/entities/session.py`
-- **.occurred_at()** (4 connections) — `backend/src/tutoring/domain/entities/session.py`
-- **.session_notes()** (4 connections) — `backend/src/tutoring/domain/entities/session.py`
-- **.student_id()** (4 connections) — `backend/src/tutoring/domain/entities/session.py`
-- **_validate_duration()** (4 connections) — `backend/src/tutoring/domain/entities/session.py`
-- *... and 16 more nodes in this community*
+- **heuristic_analyzer.py** (35 connections) — `backend/src/tutoring/domain/analytics/heuristic_analyzer.py`
+- **scoring.py** (27 connections) — `backend/src/tutoring/domain/analytics/scoring.py`
+- **TimedAttempt** (22 connections) — `backend/src/tutoring/domain/analytics/scoring.py`
+- **LearningTrend** (17 connections) — `backend/src/tutoring/domain/enums.py`
+- **compute_learning_trend()** (9 connections) — `backend/src/tutoring/domain/analytics/scoring.py`
+- **compute_dominant_error_cause()** (8 connections) — `backend/src/tutoring/domain/analytics/scoring.py`
+- **test_compute_learning_trend_covers_all_classifications()** (8 connections) — `backend/tests/unit/domain/test_heuristic_analyzer.py`
+- **compute_failure_delta()** (6 connections) — `backend/src/tutoring/domain/analytics/scoring.py`
+- **_ta()** (3 connections) — `backend/tests/unit/domain/test_heuristic_analyzer.py`
+- **_compute_exam_urgency_bonus()** (2 connections) — `backend/src/tutoring/domain/analytics/heuristic_analyzer.py`
+- **_evaluate_readiness_risk()** (2 connections) — `backend/src/tutoring/domain/analytics/heuristic_analyzer.py`
+- **collections** (2 connections)
+- **Deterministic heuristic pedagogical analyzer (zero external LLM dependency).** (1 connections) — `backend/src/tutoring/domain/analytics/heuristic_analyzer.py`
+- **Shared deterministic scoring primitives for pedagogical analytics and ML…** (1 connections) — `backend/src/tutoring/domain/analytics/scoring.py`
+- **Return (recent_mean_failure - previous_mean_failure) or None if insufficient.** (1 connections) — `backend/src/tutoring/domain/analytics/scoring.py`
+- **Classify learning evolution by comparing recent vs previous attempt windows.** (1 connections) — `backend/src/tutoring/domain/analytics/scoring.py`
+- **An exercise attempt enriched with its session timestamp and recency weight.** (1 connections) — `backend/src/tutoring/domain/analytics/scoring.py`
+- **Return recency- and severity-weighted dominant error cause, or None.** (1 connections) — `backend/src/tutoring/domain/analytics/scoring.py`
+- **Evolution direction of a student's performance over time.** (1 connections) — `backend/src/tutoring/domain/enums.py`
 
 ## Relationships
 
-- [Community 5](Community_5.md) (25 shared connections)
-- [Community 8](Community_8.md) (17 shared connections)
-- [Community 2](Community_2.md) (14 shared connections)
-- [Community 13](Community_13.md) (10 shared connections)
-- [Community 1](Community_1.md) (10 shared connections)
-- [Community 24](Community_24.md) (10 shared connections)
-- [Community 17](Community_17.md) (9 shared connections)
-- [Community 4](Community_4.md) (5 shared connections)
-- [Community 20](Community_20.md) (1 shared connections)
-- [Community 28](Community_28.md) (1 shared connections)
-- [Community 25](Community_25.md) (1 shared connections)
+- [Community 3](Community_3.md) (18 shared connections)
+- [Community 15](Community_15.md) (16 shared connections)
+- [Community 2](Community_2.md) (16 shared connections)
+- [Community 10](Community_10.md) (10 shared connections)
+- [Community 11](Community_11.md) (9 shared connections)
+- [Community 20](Community_20.md) (5 shared connections)
+- [Community 1](Community_1.md) (3 shared connections)
+- [Community 5](Community_5.md) (3 shared connections)
+- [Community 21](Community_21.md) (2 shared connections)
+- [Community 0](Community_0.md) (2 shared connections)
+- [Community 4](Community_4.md) (1 shared connections)
+- [Community 19](Community_19.md) (1 shared connections)
 
 ## Source Files
 
-- `backend/src/tutoring/application/fakes.py`
-- `backend/src/tutoring/application/use_cases/record_session.py`
-- `backend/src/tutoring/domain/entities/session.py`
-- `backend/src/tutoring/infrastructure/persistence/sqlite_session_repo.py`
-- `backend/tests/unit/application/test_fakes.py`
-- `backend/tests/unit/domain/test_session_entity.py`
+- `backend/src/tutoring/domain/analytics/heuristic_analyzer.py`
+- `backend/src/tutoring/domain/analytics/scoring.py`
+- `backend/src/tutoring/domain/enums.py`
+- `backend/tests/unit/domain/test_heuristic_analyzer.py`
 
 ## Audit Trail
 
-- EXTRACTED: 117 (64%)
-- INFERRED: 65 (36%)
+- EXTRACTED: 97 (83%)
+- INFERRED: 20 (17%)
 - AMBIGUOUS: 0 (0%)
 
 ---

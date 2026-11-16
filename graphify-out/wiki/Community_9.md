@@ -1,51 +1,60 @@
 # Community 9
 
-> 43 nodes · cohesion 0.10
+> 24 nodes · cohesion 0.14
 
 ## Key Concepts
 
-- **types.ts** (38 connections) — `frontend/src/domain/types.ts`
-- **client.ts** (29 connections) — `frontend/src/api/client.ts`
-- **HttpTutoringApi** (17 connections) — `frontend/src/api/client.ts`
-- **.request()** (13 connections) — `frontend/src/api/client.ts`
-- **SessionRecord** (9 connections) — `frontend/src/domain/types.ts`
-- **StudentDetail** (9 connections) — `frontend/src/domain/types.ts`
-- **.addExamGoal()** (4 connections) — `frontend/src/api/client.ts`
-- **.createExerciseType()** (4 connections) — `frontend/src/api/client.ts`
-- **.createStudent()** (4 connections) — `frontend/src/api/client.ts`
-- **.createSubject()** (4 connections) — `frontend/src/api/client.ts`
-- **.createTopic()** (4 connections) — `frontend/src/api/client.ts`
-- **.recordSession()** (4 connections) — `frontend/src/api/client.ts`
-- **CreateExamGoalPayload** (4 connections) — `frontend/src/domain/types.ts`
-- **CreateExerciseTypePayload** (4 connections) — `frontend/src/domain/types.ts`
-- **CreateStudentPayload** (4 connections) — `frontend/src/domain/types.ts`
-- **CreateSubjectPayload** (4 connections) — `frontend/src/domain/types.ts`
-- **CreateTopicPayload** (4 connections) — `frontend/src/domain/types.ts`
-- **ExamGoal** (4 connections) — `frontend/src/domain/types.ts`
-- **ExerciseType** (4 connections) — `frontend/src/domain/types.ts`
-- **RecordSessionPayload** (4 connections) — `frontend/src/domain/types.ts`
-- **Subject** (4 connections) — `frontend/src/domain/types.ts`
-- **Topic** (4 connections) — `frontend/src/domain/types.ts`
-- **ApiError** (3 connections) — `frontend/src/api/client.ts`
-- **.getCatalog()** (3 connections) — `frontend/src/api/client.ts`
-- **.getDiagnostic()** (3 connections) — `frontend/src/api/client.ts`
-- *... and 18 more nodes in this community*
+- **TutoringApi** (28 connections) — `frontend/src/api/client.ts`
+- **RecordSessionPage.test.tsx** (12 connections) — `frontend/src/pages/RecordSessionPage.test.tsx`
+- **CatalogTree** (11 connections) — `frontend/src/domain/types.ts`
+- **StudentsPage.test.tsx** (11 connections) — `frontend/src/pages/StudentsPage.test.tsx`
+- **CatalogPage.test.tsx** (10 connections) — `frontend/src/pages/CatalogPage.test.tsx`
+- **CatalogPage.tsx** (9 connections) — `frontend/src/pages/CatalogPage.tsx`
+- **vitest** (9 connections) — `frontend/package.json`
+- **App.test.tsx** (8 connections) — `frontend/src/App.test.tsx`
+- **@testing-library/react** (8 connections) — `frontend/package.json`
+- **@testing-library/user-event** (8 connections) — `frontend/package.json`
+- **StudentSummary** (6 connections) — `frontend/src/domain/types.ts`
+- **RecordSessionPageProps** (3 connections) — `frontend/src/pages/RecordSessionPage.tsx`
+- **.getCatalog()** (2 connections) — `frontend/src/api/client.ts`
+- **.getStudent()** (2 connections) — `frontend/src/api/client.ts`
+- **.listSessions()** (2 connections) — `frontend/src/api/client.ts`
+- **.listStudents()** (2 connections) — `frontend/src/api/client.ts`
+- **CatalogPageProps** (2 connections) — `frontend/src/pages/CatalogPage.tsx`
+- **StudentDetailPageProps** (2 connections) — `frontend/src/pages/StudentDetailPage.tsx`
+- **createMockApi()** (1 connections) — `frontend/src/App.test.tsx`
+- **createMockApi()** (1 connections) — `frontend/src/pages/CatalogPage.test.tsx`
+- **createMockApi()** (1 connections) — `frontend/src/pages/RecordSessionPage.test.tsx`
+- **sampleCatalog** (1 connections) — `frontend/src/pages/RecordSessionPage.test.tsx`
+- **createMockApi()** (1 connections) — `frontend/src/pages/StudentsPage.test.tsx`
+- **smoke.test.ts** (1 connections) — `frontend/src/smoke.test.ts`
 
 ## Relationships
 
-- [Community 23](Community_23.md) (25 shared connections)
-- [Community 29](Community_29.md) (16 shared connections)
-- [Community 39](Community_39.md) (7 shared connections)
-- [Community 40](Community_40.md) (4 shared connections)
+- [Community 8](Community_8.md) (16 shared connections)
+- [Community 7](Community_7.md) (16 shared connections)
+- [Community 14](Community_14.md) (13 shared connections)
+- [Community 17](Community_17.md) (7 shared connections)
+- [Community 6](Community_6.md) (6 shared connections)
+- [Community 16](Community_16.md) (5 shared connections)
 
 ## Source Files
 
+- `frontend/package.json`
+- `frontend/src/App.test.tsx`
 - `frontend/src/api/client.ts`
 - `frontend/src/domain/types.ts`
+- `frontend/src/pages/CatalogPage.test.tsx`
+- `frontend/src/pages/CatalogPage.tsx`
+- `frontend/src/pages/RecordSessionPage.test.tsx`
+- `frontend/src/pages/RecordSessionPage.tsx`
+- `frontend/src/pages/StudentDetailPage.tsx`
+- `frontend/src/pages/StudentsPage.test.tsx`
+- `frontend/src/smoke.test.ts`
 
 ## Audit Trail
 
-- EXTRACTED: 138 (100%)
+- EXTRACTED: 102 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

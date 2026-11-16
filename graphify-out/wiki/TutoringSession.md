@@ -2,7 +2,7 @@
 
 > God node · 65 connections · `backend/src/tutoring/domain/entities/session.py`
 
-**Community:** [Community 12](Community_12.md)
+**Community:** [Community 3](Community_3.md)
 
 ## Connections by Relation
 
