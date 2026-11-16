@@ -9,6 +9,13 @@
       "computedHash": "83485963700bcf11d5bf78118facb301676b69d918fee2e45a95e7f1a2840f6c",
       "installMode": "copy"
     },
+    "graphify": {
+      "source": "Graphify-Labs/graphify",
+      "commit": "81b1664971c9bcfa2d53c79a2ec9e50d5b30ec89",
+      "sourceType": "github",
+      "skillPath": "graphify/SKILL.md",
+      "computedHash": "7fe2e1347678fe2063617a4afa14a0b50811b4285cc3e20ec0492624854dbc5d"
+    },
     "impeccable": {
       "source": "pbakaus/impeccable",
       "commit": "d41d9860b0094dcb68030657da63461212835aaa",

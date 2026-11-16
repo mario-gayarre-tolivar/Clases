@@ -10,6 +10,12 @@ node_modules/
 dist/
 coverage/
 .vitest/
-.agent/
+.agents/
 *.egg-info/
 frontend/tsconfig.tsbuildinfo
+
+# Graphify (Option B: ignore heavy JSON/HTML/cache, track wiki and report)
+graphify-out/*
+!graphify-out/GRAPH_REPORT.md
+!graphify-out/wiki/
+
