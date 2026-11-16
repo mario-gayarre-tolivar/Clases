@@ -7,7 +7,6 @@ from concurrent.futures import Future, ThreadPoolExecutor
 import logging
 import threading
 import time
-from typing import Any
 
 from tutoring.domain.ports.ml_training import TrainingTriggerPort
 from tutoring.infrastructure.ml.trainer import (
@@ -46,6 +45,7 @@ class BackgroundTrainingCoordinator(TrainingTriggerPort):
         self._current_future: Future[TrainingReport] | None = None
         self._last_report: TrainingReport | None = None
         self._shutdown = False
+        self._timer_generation = 0
 
     @property
     def pending_events(self) -> int:
@@ -128,12 +128,15 @@ class BackgroundTrainingCoordinator(TrainingTriggerPort):
         self._executor.shutdown(wait=wait)
 
     def _cancel_timer_locked(self) -> None:
+        self._timer_generation += 1
         if self._timer is not None:
             self._timer.cancel()
             self._timer = None
 
     def _schedule_timer_locked(self) -> None:
-        timer = threading.Timer(self._debounce_seconds, self._on_timer)
+        self._timer_generation += 1
+        gen = self._timer_generation
+        timer = threading.Timer(self._debounce_seconds, self._on_timer, args=(gen,))
         timer.daemon = True
         self._timer = timer
         timer.start()
@@ -144,8 +147,10 @@ class BackgroundTrainingCoordinator(TrainingTriggerPort):
         self._pending_events = 0
         self._current_future = self._executor.submit(self._run_job)
 
-    def _on_timer(self) -> None:
+    def _on_timer(self, generation: int) -> None:
         with self._state_lock:
+            if generation != self._timer_generation:
+                return
             self._timer = None
             if self._shutdown or self._pending_events == 0:
                 return
@@ -155,26 +160,28 @@ class BackgroundTrainingCoordinator(TrainingTriggerPort):
             self._submit_job_locked()
 
     def _run_job(self) -> TrainingReport:
+        report: TrainingReport | None = None
         try:
-            report = self._trainer.train_and_activate()
-        except Exception as exc:
-            logger.exception("Pedagogical model training failed in background coordinator: %s", exc)
-            report = TrainingReport(
-                status=TrainingStatus.FAILED,
-                sample_count=0,
-                reason=str(exc),
-            )
-
-        with self._state_lock:
-            self._last_report = report
-            self._in_flight = False
-            if not self._shutdown and self._dirty_while_in_flight:
-                self._dirty_while_in_flight = False
-                if self._pending_events >= self._burst_threshold or self._debounce_seconds == 0:
-                    self._cancel_timer_locked()
-                    self._submit_job_locked()
-                else:
-                    self._cancel_timer_locked()
-                    self._schedule_timer_locked()
-
-        return report
+            try:
+                report = self._trainer.train_and_activate()
+            except Exception as exc:
+                logger.exception("Pedagogical model training failed in background coordinator: %s", exc)
+                report = TrainingReport(
+                    status=TrainingStatus.FAILED,
+                    sample_count=0,
+                    reason=str(exc),
+                )
+            return report
+        finally:
+            with self._state_lock:
+                if report is not None:
+                    self._last_report = report
+                self._in_flight = False
+                if not self._shutdown and self._dirty_while_in_flight:
+                    self._dirty_while_in_flight = False
+                    if self._pending_events >= self._burst_threshold or self._debounce_seconds == 0:
+                        self._cancel_timer_locked()
+                        self._submit_job_locked()
+                    else:
+                        self._cancel_timer_locked()
+                        self._schedule_timer_locked()

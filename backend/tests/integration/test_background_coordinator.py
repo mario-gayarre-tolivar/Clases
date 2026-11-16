@@ -101,3 +101,47 @@ def test_coordinator_shutdown_ignores_notifications_and_cancels_timer() -> None:
     time.sleep(0.3)
     assert trainer.calls == 0
     assert coord.pending_events == 0
+
+
+def test_coordinator_stale_timer_callback_discarded_and_does_not_clobber_replacement() -> None:
+    trainer = _StubTrainer()
+    coord = BackgroundTrainingCoordinator(trainer=trainer, debounce_seconds=0.1, burst_threshold=10)  # type: ignore[arg-type]
+    try:
+        coord.notify_new_data()
+        initial_gen = coord._timer_generation
+        initial_timer = coord._timer
+        assert initial_timer is not None
+
+        # Replacement notification before initial timer fires
+        coord.notify_new_data()
+        assert coord._timer_generation > initial_gen
+        replacement_timer = coord._timer
+        assert replacement_timer is not None
+
+        # Directly simulate stale timer callback firing for older generation
+        coord._on_timer(initial_gen)
+
+        # Replacement timer must NOT be clobbered
+        assert coord._timer is replacement_timer
+        assert trainer.calls == 0
+
+        # Wait for active replacement timer to fire legitimately
+        time.sleep(0.2)
+        assert trainer.calls == 1
+    finally:
+        coord.shutdown(wait=True)
+
+
+def test_coordinator_finally_resets_in_flight_on_base_exception() -> None:
+    class _CrashingTrainer:
+        def train_and_activate(self) -> TrainingReport:
+            raise BaseException("fatal unhandled error")
+
+    coord = BackgroundTrainingCoordinator(trainer=_CrashingTrainer(), debounce_seconds=0.01)  # type: ignore[arg-type]
+    try:
+        coord.notify_new_data()
+        time.sleep(0.1)
+        assert coord.is_training is False
+    finally:
+        coord.shutdown(wait=True)
+
