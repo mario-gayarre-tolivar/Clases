@@ -41,6 +41,14 @@ CREATE TABLE IF NOT EXISTS exam_goals (
     topic_ids TEXT NOT NULL DEFAULT ''
 );
 
+CREATE TABLE IF NOT EXISTS exam_results (
+    goal_id TEXT PRIMARY KEY REFERENCES exam_goals(id) ON DELETE CASCADE,
+    score REAL NOT NULL,
+    max_score REAL NOT NULL,
+    recorded_at TEXT NOT NULL,
+    notes TEXT NOT NULL DEFAULT ''
+);
+
 CREATE TABLE IF NOT EXISTS tutoring_sessions (
     id TEXT PRIMARY KEY,
     student_id TEXT NOT NULL REFERENCES students(id) ON DELETE CASCADE,
@@ -64,6 +72,9 @@ def init_sqlite_db(db_path: str | Path = ":memory:") -> sqlite3.Connection:
     """Create SQLite database connection and initialize tables."""
     conn = sqlite3.connect(db_path, check_same_thread=False)
     conn.execute("PRAGMA foreign_keys = ON;")
+    if str(db_path) != ":memory:":
+        conn.execute("PRAGMA journal_mode = WAL;")
+        conn.execute("PRAGMA busy_timeout = 5000;")
     conn.executescript(SCHEMA_SQL)
     conn.row_factory = sqlite3.Row
     return conn
