@@ -47,6 +47,20 @@ En Windows (PowerShell):
 .\run.ps1
 ```
 
+o
+
+En cmd:
+```cmd
+.\run.bat
+```
+
+o
+
+Con python:
+```powershell
+.venv\Scripts\python.exe run_local.py
+```
+
 ### Opción Manual (Dos terminales)
 **Terminal 1 (Backend):**
 ```powershell
