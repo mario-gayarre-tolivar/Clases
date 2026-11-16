@@ -1,6 +1,10 @@
 """FastAPI application factory, dependency wiring, and domain error handlers."""
 
-from datetime import date, datetime
+from collections.abc import AsyncIterator
+from contextlib import asynccontextmanager
+from datetime import date, datetime, timezone
+from pathlib import Path
+import threading
 from typing import Annotated
 from uuid import UUID
 
@@ -19,6 +23,7 @@ from tutoring.application.dtos import (
     ExamGoalDTO,
     ExerciseAttemptInputDTO,
     ExerciseTypeDTO,
+    RecordExamResultDTO,
     RecordSessionDTO,
     SessionDTO,
     StudentDetailDTO,
@@ -41,6 +46,12 @@ from tutoring.domain.exceptions import (
     EntityNotFoundError,
     ValidationError,
 )
+from tutoring.infrastructure.ml.background_coordinator import (
+    BackgroundTrainingCoordinator,
+)
+from tutoring.infrastructure.ml.model_store import ModelArtifactStore
+from tutoring.infrastructure.ml.sklearn_analyzer import SklearnPedagogicalAnalyzer
+from tutoring.infrastructure.ml.trainer import PedagogicalModelTrainer
 from tutoring.infrastructure.persistence.sqlite_catalog_repo import (
     SqliteCatalogRepository,
 )
@@ -89,6 +100,13 @@ class ExerciseAttemptPayload(BaseModel):
     notes: str = ""
 
 
+class RecordExamResultPayload(BaseModel):
+    score: float = Field(ge=0.0)
+    max_score: float = Field(default=10.0, gt=0.0)
+    recorded_at: datetime | None = None
+    notes: str = ""
+
+
 class RecordSessionPayload(BaseModel):
     occurred_at: datetime
     duration_minutes: int = Field(gt=0)
@@ -96,22 +114,67 @@ class RecordSessionPayload(BaseModel):
     attempts: list[ExerciseAttemptPayload] = Field(default_factory=list)
 
 
-def create_app(db_path: str = ":memory:") -> FastAPI:
+def create_app(
+    db_path: str | Path = ":memory:",
+    model_dir: str | Path | None = None,
+    debounce_seconds: float = 5.0,
+    burst_threshold: int = 10,
+    min_training_samples: int = 20,
+) -> FastAPI:
     """Instantiate and configure the FastAPI application."""
     conn = init_sqlite_db(db_path)
-    catalog_repo = SqliteCatalogRepository(conn)
-    student_repo = SqliteStudentRepository(conn)
-    session_repo = SqliteSessionRepository(conn)
-    analyzer = HeuristicPedagogicalAnalyzer()
+    db_lock = threading.RLock()
+    catalog_repo = SqliteCatalogRepository(conn, lock=db_lock)
+    student_repo = SqliteStudentRepository(conn, lock=db_lock)
+    session_repo = SqliteSessionRepository(conn, lock=db_lock)
+
+    model_store: ModelArtifactStore | None = None
+    if model_dir is not None:
+        model_store = ModelArtifactStore(model_dir)
+
+    analyzer = SklearnPedagogicalAnalyzer(model_store=model_store)
+    trainer = PedagogicalModelTrainer(
+        student_repo=student_repo,
+        session_repo=session_repo,
+        catalog_repo=catalog_repo,
+        analyzer=analyzer,
+        model_store=model_store,
+        min_samples=min_training_samples,
+        db_lock=db_lock,
+    )
+    training_coordinator = BackgroundTrainingCoordinator(
+        trainer=trainer,
+        debounce_seconds=debounce_seconds,
+        burst_threshold=burst_threshold,
+    )
 
     manage_catalog_uc = ManageCatalogUseCase(catalog_repo)
-    manage_students_uc = ManageStudentsUseCase(student_repo, catalog_repo)
-    record_session_uc = RecordSessionUseCase(student_repo, catalog_repo, session_repo)
+    manage_students_uc = ManageStudentsUseCase(
+        student_repo, catalog_repo, training_trigger=training_coordinator
+    )
+    record_session_uc = RecordSessionUseCase(
+        student_repo, catalog_repo, session_repo, training_trigger=training_coordinator
+    )
     generate_diagnostic_uc = GenerateStudentDiagnosticUseCase(
         student_repo, catalog_repo, session_repo, analyzer
     )
 
-    app = FastAPI(title="Tutoring Management & Pedagogical Memory API", version="0.1.0")
+    @asynccontextmanager
+    async def lifespan(app: FastAPI) -> AsyncIterator[None]:
+        yield
+        training_coordinator.shutdown(wait=False)
+        try:
+            conn.close()
+        except Exception:
+            pass
+
+    app = FastAPI(
+        title="Tutoring Management & Pedagogical Memory API",
+        version="0.1.0",
+        lifespan=lifespan,
+    )
+    app.state.training_coordinator = training_coordinator
+    app.state.analyzer = analyzer
 
     app.add_middleware(
         CORSMiddleware,
@@ -229,6 +292,32 @@ def create_app(db_path: str = ":memory:") -> FastAPI:
                 topic_ids=tuple(payload.topic_ids),
             ),
             today=date.today(),
+        )
+
+    @app.post(
+        "/api/students/{student_id}/exam-goals/{goal_id}/result",
+        response_model=ExamGoalDTO,
+        status_code=status.HTTP_201_CREATED,
+    )
+    async def record_exam_goal_result(
+        student_id: UUID,
+        goal_id: UUID,
+        payload: RecordExamResultPayload,
+    ) -> ExamGoalDTO:
+        recorded_at = (
+            payload.recorded_at
+            if payload.recorded_at is not None
+            else datetime.now(timezone.utc)
+        )
+        return manage_students_uc.record_exam_result(
+            student_id=student_id,
+            goal_id=goal_id,
+            dto=RecordExamResultDTO(
+                score=payload.score,
+                max_score=payload.max_score,
+                recorded_at=recorded_at,
+                notes=payload.notes,
+            ),
         )
 
     # Session endpoints

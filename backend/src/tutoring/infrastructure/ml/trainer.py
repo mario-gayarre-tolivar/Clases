@@ -64,7 +64,7 @@ class PedagogicalModelTrainer:
         session_repo: SessionRepository,
         catalog_repo: CatalogRepository,
         analyzer: SklearnPedagogicalAnalyzer,
-        model_store: ModelArtifactStore,
+        model_store: ModelArtifactStore | None = None,
         min_samples: int = 20,
         cv_folds: int = 3,
         min_f1_score: float = 0.55,
@@ -142,7 +142,7 @@ class PedagogicalModelTrainer:
 
         # Step 5: Check if dataset hash matches current active model
         active_meta = self._analyzer.metadata
-        if active_meta is None:
+        if active_meta is None and self._model_store is not None:
             active_meta = self._model_store.load_metadata()
 
         if active_meta is not None and active_meta.dataset_hash == dataset.dataset_hash:
@@ -215,7 +215,8 @@ class PedagogicalModelTrainer:
             feature_names=tuple(dataset.feature_names),
         )
 
-        self._model_store.save(final_model, metadata)
+        if self._model_store is not None:
+            self._model_store.save(final_model, metadata)
         self._analyzer.update_model(final_model, metadata)
 
         return TrainingReport(
