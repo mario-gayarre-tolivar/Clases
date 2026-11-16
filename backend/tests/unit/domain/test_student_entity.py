@@ -1,13 +1,17 @@
 """Unit tests for T1.3: Student entity and ExamGoal value object."""
 
-from datetime import date
+from datetime import date, datetime, timezone
 from uuid import uuid4
 
 import pytest
 
 from tutoring.domain.entities.student import Student
-from tutoring.domain.exceptions import DuplicateEntityError, ValidationError
-from tutoring.domain.value_objects.exam_goal import ExamGoal
+from tutoring.domain.exceptions import (
+    DuplicateEntityError,
+    EntityNotFoundError,
+    ValidationError,
+)
+from tutoring.domain.value_objects.exam_goal import ExamGoal, ExamResult
 
 
 def test_exam_goal_validates_title_and_computes_days_remaining() -> None:
@@ -153,3 +157,52 @@ def test_student_upcoming_exams_filters_and_sorts_chronologically() -> None:
 
     upcoming = student.upcoming_exams(reference_date=today, horizon_days=14)
     assert upcoming == [in_3_days, in_12_days]
+
+
+def test_exam_result_validates_bounds_and_normalizes_score() -> None:
+    ts = datetime(2026, 11, 16, 18, 0, tzinfo=timezone.utc)
+    passing = ExamResult(score=5.0, max_score=10.0, recorded_at=ts, notes="  Justo  ")
+    assert passing.normalized_score_10 == 5.0
+    assert passing.is_passing is True
+    assert passing.notes == "Justo"
+
+    scaled_fail = ExamResult(score=49.0, max_score=100.0, recorded_at=ts)
+    assert scaled_fail.normalized_score_10 == 4.9
+    assert scaled_fail.is_passing is False
+
+    for bad_score, bad_max in [(-0.1, 10.0), (10.5, 10.0), (5.0, 0.0), (float("nan"), 10.0)]:
+        with pytest.raises(ValidationError):
+            ExamResult(score=bad_score, max_score=bad_max, recorded_at=ts)
+
+
+def test_exam_goal_with_result_is_no_longer_upcoming() -> None:
+    today = date(2026, 11, 16)
+    goal = ExamGoal(id=uuid4(), subject_id=uuid4(), title="Parcial", exam_date=today)
+    assert goal.is_upcoming(today, horizon_days=14) is True
+
+    result = ExamResult(score=7.5, recorded_at=datetime(2026, 11, 16, 18, 0, tzinfo=timezone.utc))
+    evaluated = goal.with_result(result)
+    assert evaluated.result == result
+    assert evaluated.is_upcoming(today, horizon_days=14) is False
+
+    with pytest.raises(DuplicateEntityError):
+        evaluated.with_result(result)
+
+
+def test_student_record_exam_result_lifecycle() -> None:
+    today = date(2026, 11, 16)
+    student = Student(id=uuid4(), full_name="Sofía", academic_level="2º ESO")
+    goal = ExamGoal(id=uuid4(), subject_id=uuid4(), title="Álgebra", exam_date=date(2026, 11, 20))
+    student.add_exam_goal(goal, today=today)
+
+    result = ExamResult(score=4.2, recorded_at=datetime(2026, 11, 20, 17, 0, tzinfo=timezone.utc))
+    with pytest.raises(EntityNotFoundError):
+        student.record_exam_result(uuid4(), result)
+
+    updated = student.record_exam_result(goal.id, result)
+    assert updated.result == result
+    assert student.exam_goals[0].result == result
+
+    with pytest.raises(DuplicateEntityError):
+        student.record_exam_result(goal.id, result)
+

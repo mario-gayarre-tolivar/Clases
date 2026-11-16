@@ -4,9 +4,13 @@ from collections.abc import Sequence
 from datetime import date
 from uuid import UUID
 
-from tutoring.domain.exceptions import DuplicateEntityError, ValidationError
+from tutoring.domain.exceptions import (
+    DuplicateEntityError,
+    EntityNotFoundError,
+    ValidationError,
+)
 from tutoring.domain.validation import require_non_empty
-from tutoring.domain.value_objects.exam_goal import ExamGoal
+from tutoring.domain.value_objects.exam_goal import ExamGoal, ExamResult
 
 
 class Student:
@@ -53,6 +57,15 @@ class Student:
         if goal.exam_date < today:
             raise ValidationError("Exam goal date cannot be in the past.")
         self._append_unique_exam_goal(goal)
+
+    def record_exam_result(self, goal_id: UUID, result: ExamResult) -> ExamGoal:
+        """Record an evaluation result for an existing exam goal, returning the updated goal."""
+        for i, goal in enumerate(self._exam_goals):
+            if goal.id == goal_id:
+                updated = goal.with_result(result)
+                self._exam_goals[i] = updated
+                return updated
+        raise EntityNotFoundError(f"Exam goal '{goal_id}' not found.")
 
     def upcoming_exams(
         self, reference_date: date, horizon_days: int = 14

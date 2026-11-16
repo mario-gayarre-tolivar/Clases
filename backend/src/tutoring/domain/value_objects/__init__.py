@@ -7,11 +7,12 @@ from tutoring.domain.value_objects.diagnostic import (
     SubjectPriority,
     WeakExerciseType,
 )
-from tutoring.domain.value_objects.exam_goal import ExamGoal
+from tutoring.domain.value_objects.exam_goal import ExamGoal, ExamResult
 
 __all__ = [
     "ExamAlert",
     "ExamGoal",
+    "ExamResult",
     "ExerciseAttempt",
     "StudentDiagnostic",
     "SubjectPriority",
