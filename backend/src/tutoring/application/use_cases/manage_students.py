@@ -7,13 +7,16 @@ from tutoring.application.dtos import (
     CreateExamGoalDTO,
     CreateStudentDTO,
     ExamGoalDTO,
+    ExamResultDTO,
+    RecordExamResultDTO,
     StudentDetailDTO,
     StudentSummaryDTO,
 )
 from tutoring.domain.entities.student import Student
 from tutoring.domain.exceptions import EntityNotFoundError
+from tutoring.domain.ports.ml_training import TrainingTriggerPort
 from tutoring.domain.ports.repositories import CatalogRepository, StudentRepository
-from tutoring.domain.value_objects.exam_goal import ExamGoal
+from tutoring.domain.value_objects.exam_goal import ExamGoal, ExamResult
 
 
 class ManageStudentsUseCase:
@@ -23,9 +26,11 @@ class ManageStudentsUseCase:
         self,
         student_repo: StudentRepository,
         catalog_repo: CatalogRepository,
+        training_trigger: TrainingTriggerPort | None = None,
     ) -> None:
         self._student_repo = student_repo
         self._catalog_repo = catalog_repo
+        self._training_trigger = training_trigger
 
     def create_student(self, dto: CreateStudentDTO) -> StudentDetailDTO:
         student = Student(
@@ -78,24 +83,57 @@ class ManageStudentsUseCase:
         )
         student.add_exam_goal(goal, today=today)
         self._student_repo.save(student)
+        return self._to_exam_goal_dto(goal)
+
+    def record_exam_result(
+        self,
+        student_id: UUID,
+        goal_id: UUID,
+        dto: RecordExamResultDTO,
+    ) -> ExamGoalDTO:
+        student = self._student_repo.get_by_id(student_id)
+        if student is None:
+            raise EntityNotFoundError(f"Student '{student_id}' was not found.")
+
+        result = ExamResult(
+            score=dto.score,
+            recorded_at=dto.recorded_at,
+            max_score=dto.max_score,
+            notes=dto.notes,
+        )
+        updated_goal = student.record_exam_result(goal_id=goal_id, result=result)
+        self._student_repo.save(student)
+        if self._training_trigger is not None:
+            self._training_trigger.notify_new_data()
+        return self._to_exam_goal_dto(updated_goal)
+
+    @staticmethod
+    def _to_exam_goal_dto(goal: ExamGoal) -> ExamGoalDTO:
+        result_dto = (
+            ExamResultDTO(
+                score=goal.result.score,
+                max_score=goal.result.max_score,
+                normalized_score_10=goal.result.normalized_score_10,
+                is_passing=goal.result.is_passing,
+                recorded_at=goal.result.recorded_at,
+                notes=goal.result.notes,
+            )
+            if goal.result is not None
+            else None
+        )
         return ExamGoalDTO(
             id=goal.id,
             subject_id=goal.subject_id,
             title=goal.title,
             exam_date=goal.exam_date,
             topic_ids=goal.topic_ids,
+            result=result_dto,
         )
 
-    @staticmethod
-    def _to_detail_dto(student: Student) -> StudentDetailDTO:
+    @classmethod
+    def _to_detail_dto(cls, student: Student) -> StudentDetailDTO:
         goal_dtos = tuple(
-            ExamGoalDTO(
-                id=g.id,
-                subject_id=g.subject_id,
-                title=g.title,
-                exam_date=g.exam_date,
-                topic_ids=g.topic_ids,
-            )
+            cls._to_exam_goal_dto(g)
             for g in student.exam_goals
         )
         return StudentDetailDTO(

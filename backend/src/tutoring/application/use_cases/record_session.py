@@ -5,6 +5,7 @@ from uuid import UUID, uuid4
 from tutoring.application.dtos import ExerciseAttemptDTO, RecordSessionDTO, SessionDTO
 from tutoring.domain.entities.session import TutoringSession
 from tutoring.domain.exceptions import EntityNotFoundError
+from tutoring.domain.ports.ml_training import TrainingTriggerPort
 from tutoring.domain.ports.repositories import (
     CatalogRepository,
     SessionRepository,
@@ -21,10 +22,12 @@ class RecordSessionUseCase:
         student_repo: StudentRepository,
         catalog_repo: CatalogRepository,
         session_repo: SessionRepository,
+        training_trigger: TrainingTriggerPort | None = None,
     ) -> None:
         self._student_repo = student_repo
         self._catalog_repo = catalog_repo
         self._session_repo = session_repo
+        self._training_trigger = training_trigger
 
     def execute(self, student_id: UUID, dto: RecordSessionDTO) -> SessionDTO:
         student = self._student_repo.get_by_id(student_id)
@@ -54,6 +57,8 @@ class RecordSessionUseCase:
             attempts=attempts,
         )
         self._session_repo.save(session)
+        if session.attempts and self._training_trigger is not None:
+            self._training_trigger.notify_new_data()
         return self._to_dto(session)
 
     def list_student_sessions(self, student_id: UUID) -> tuple[SessionDTO, ...]:

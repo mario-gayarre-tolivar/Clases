@@ -11,6 +11,7 @@ from tutoring.domain.entities.catalog import (
 )
 from tutoring.domain.entities.session import TutoringSession
 from tutoring.domain.entities.student import Student
+from tutoring.domain.ports.ml_training import TrainingTriggerPort
 from tutoring.domain.ports.repositories import (
     CatalogRepository,
     SessionRepository,
@@ -92,3 +93,14 @@ class InMemorySessionRepository(SessionRepository):
             for session in self._sessions.values()
             if session.student_id == student_id
         )
+
+
+class FakeTrainingTrigger(TrainingTriggerPort):
+    """Fake training trigger tracking notification calls in memory."""
+
+    def __init__(self) -> None:
+        self.trigger_count: int = 0
+
+    def notify_new_data(self) -> None:
+        self.trigger_count += 1
+

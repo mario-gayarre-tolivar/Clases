@@ -7,6 +7,7 @@ import pytest
 
 from tutoring.application.dtos import ExerciseAttemptInputDTO, RecordSessionDTO
 from tutoring.application.fakes import (
+    FakeTrainingTrigger,
     InMemoryCatalogRepository,
     InMemorySessionRepository,
     InMemoryStudentRepository,
@@ -95,3 +96,47 @@ def test_record_session_validates_student_and_exercise_types_and_saves() -> None
     sessions = use_case.list_student_sessions(student.id)
     assert len(sessions) == 1
     assert sessions[0].id == session_dto.id
+
+
+def test_record_session_notifies_trigger_only_when_attempts_present() -> None:
+    student_repo = InMemoryStudentRepository()
+    catalog_repo = InMemoryCatalogRepository()
+    session_repo = InMemorySessionRepository()
+    trigger = FakeTrainingTrigger()
+    use_case = RecordSessionUseCase(
+        student_repo=student_repo,
+        catalog_repo=catalog_repo,
+        session_repo=session_repo,
+        training_trigger=trigger,
+    )
+    student = Student(id=uuid4(), full_name="Hugo", academic_level="3º ESO")
+    student_repo.save(student)
+    subject = Subject(id=uuid4(), name="Lengua")
+    topic = Topic(id=uuid4(), subject_id=subject.id, name="Sintaxis")
+    ex_type = ExerciseType(id=uuid4(), topic_id=topic.id, name="Oraciones")
+    catalog_repo.save_subject(subject)
+    catalog_repo.save_topic(topic)
+    catalog_repo.save_exercise_type(ex_type)
+
+    # Empty attempts -> does not trigger retraining
+    use_case.execute(
+        student.id,
+        RecordSessionDTO(
+            occurred_at=datetime(2026, 11, 16, 17, 0, tzinfo=timezone.utc),
+            duration_minutes=30,
+            attempts=(),
+        ),
+    )
+    assert trigger.trigger_count == 0
+
+    # Session with attempts -> notifies trigger
+    use_case.execute(
+        student.id,
+        RecordSessionDTO(
+            occurred_at=datetime(2026, 11, 16, 18, 0, tzinfo=timezone.utc),
+            duration_minutes=60,
+            attempts=(ExerciseAttemptInputDTO(ex_type.id, AttemptOutcome.SUCCESS),),
+        ),
+    )
+    assert trigger.trigger_count == 1
+

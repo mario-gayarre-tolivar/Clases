@@ -81,12 +81,31 @@ class CreateStudentDTO:
 
 
 @dataclass(frozen=True)
+class ExamResultDTO:
+    score: float
+    max_score: float
+    normalized_score_10: float
+    is_passing: bool
+    recorded_at: datetime
+    notes: str
+
+
+@dataclass(frozen=True)
 class ExamGoalDTO:
     id: UUID
     subject_id: UUID
     title: str
     exam_date: date
     topic_ids: tuple[UUID, ...]
+    result: ExamResultDTO | None = None
+
+
+@dataclass(frozen=True)
+class RecordExamResultDTO:
+    score: float
+    recorded_at: datetime
+    max_score: float = 10.0
+    notes: str = ""
 
 
 @dataclass(frozen=True)
