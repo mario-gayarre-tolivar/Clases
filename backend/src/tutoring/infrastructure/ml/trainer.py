@@ -30,6 +30,7 @@ class TrainingStatus(str, Enum):
     SKIPPED_SINGLE_CLASS = "skipped_single_class"
     SKIPPED_UNCHANGED = "skipped_unchanged"
     REJECTED_QUALITY = "rejected_quality"
+    FAILED = "failed"
 
 
 @dataclass(frozen=True)
