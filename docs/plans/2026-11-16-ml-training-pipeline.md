@@ -913,7 +913,7 @@ git commit -m "feat(ml): add resource-bounded PedagogicalModelTrainer with CV qu
   - `.notify_new_data() -> None`, `.flush(timeout: float = 30.0) -> TrainingReport | None`, `.shutdown(wait: bool = False) -> None`
   - Properties: `.pending_events: int`, `.is_training: bool`, `.last_report: TrainingReport | None`
 
-- [ ] **Step 1: Write failing tests for debounce coalescing, burst flush, in-flight trailing re-run, and error isolation**
+- [x] **Step 1: Write failing tests for debounce coalescing, burst flush, in-flight trailing re-run, and error isolation**
 
 Create `backend/tests/integration/test_background_coordinator.py`:
 
@@ -989,12 +989,12 @@ def test_coordinator_coalesces_events_arriving_while_in_flight() -> None:
         coord.shutdown(wait=True)
 ```
 
-- [ ] **Step 2: Run test to verify RED**
+- [x] **Step 2: Run test to verify RED**
 
 Run: `.venv\Scripts\pytest.exe backend\tests\integration\test_background_coordinator.py -v`
 Expected: FAIL (`ModuleNotFoundError: No module named 'tutoring.infrastructure.ml.background_coordinator'`).
 
-- [ ] **Step 3: Implement `BackgroundTrainingCoordinator` in `backend/src/tutoring/infrastructure/ml/background_coordinator.py`**
+- [x] **Step 3: Implement `BackgroundTrainingCoordinator` in `backend/src/tutoring/infrastructure/ml/background_coordinator.py`**
 
 - Use `ThreadPoolExecutor(max_workers=1, thread_name_prefix="ml-trainer")` and daemon `threading.Timer` guarded by `_state_lock = threading.Lock()`.
 - Track `_pending_events`, `_timer`, `_in_flight`, `_dirty_while_in_flight`, `_current_future`, `_last_report`, `_shutdown`.
@@ -1002,12 +1002,12 @@ Expected: FAIL (`ModuleNotFoundError: No module named 'tutoring.infrastructure.m
 - Catch exceptions in `_run_job()`, log with `logging.getLogger(__name__).exception(...)`, and store `TrainingReport(status=TrainingStatus.FAILED, sample_count=0, reason=str(exc))`.
 - Implement `flush(timeout: float = 30.0)` to cancel any timer, submit immediately if `_pending_events > 0` and not `_in_flight`, wait on `_current_future.result(timeout=timeout)` (and loop once if `_dirty_while_in_flight`), and return `_last_report`.
 
-- [ ] **Step 4: Run test to verify GREEN**
+- [x] **Step 4: Run test to verify GREEN**
 
 Run: `.venv\Scripts\pytest.exe backend\tests\integration\test_background_coordinator.py -v`
 Expected: PASS.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add backend/src/tutoring/infrastructure/ml/background_coordinator.py backend/tests/integration/test_background_coordinator.py
@@ -1030,7 +1030,7 @@ git commit -m "feat(ml): add coalescing BackgroundTrainingCoordinator with singl
   - `create_app(db_path: str = ":memory:", model_dir: str | Path | None = None, debounce_seconds: float = 5.0, burst_threshold: int = 10, min_training_samples: int = 20) -> FastAPI`
   - `POST /api/students/{student_id}/exam-goals/{goal_id}/result` returning `ExamGoalDTO` (201 Created; 404/409/422 via domain handlers)
 
-- [ ] **Step 1: Write failing API tests for `POST .../exam-goals/{goal_id}/result` and E2E auto-training pipeline**
+- [x] **Step 1: Write failing API tests for `POST .../exam-goals/{goal_id}/result` and E2E auto-training pipeline**
 
 Append to `backend/tests/integration/test_students_api.py`:
 
@@ -1171,12 +1171,12 @@ async def test_e2e_api_auto_trains_model_and_skips_empty_session_retrain(tmp_pat
         app.state.training_coordinator.shutdown(wait=True)
 ```
 
-- [ ] **Step 2: Run tests to verify RED**
+- [x] **Step 2: Run tests to verify RED**
 
 Run: `.venv\Scripts\pytest.exe backend\tests\integration\test_students_api.py backend\tests\integration\test_ml_training_e2e_api.py -v`
 Expected: FAIL (`404 Not Found` on `/result` and unexpected keyword `model_dir` in `create_app`).
 
-- [ ] **Step 3: Wire `create_app`, `lifespan`, `POST .../result`, and `main.py`**
+- [x] **Step 3: Wire `create_app`, `lifespan`, `POST .../result`, and `main.py`**
 
 - In `backend/src/tutoring/presentation/api/app.py`:
   - Update `create_app(...)` signature with `model_dir: str | Path | None = None, debounce_seconds: float = 5.0, burst_threshold: int = 10, min_training_samples: int = 20`.
@@ -1188,12 +1188,12 @@ Expected: FAIL (`404 Not Found` on `/result` and unexpected keyword `model_dir` 
 - In `backend/src/tutoring/presentation/api/main.py`:
   - Read `TUTORING_DB_PATH` (default `"tutoring.sqlite3"`) and `TUTORING_MODEL_DIR` (default `"models"`) and pass to `create_app(...)`.
 
-- [ ] **Step 4: Run full backend test suite + strict mypy**
+- [x] **Step 4: Run full backend test suite + strict mypy**
 
 Run: `.venv\Scripts\pytest.exe backend -v && .venv\Scripts\mypy.exe backend\src`
 Expected: All tests PASS and `mypy` reports `Success: no issues found`.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add backend/src/tutoring/presentation/api/app.py backend/src/tutoring/presentation/api/main.py backend/tests/integration/test_students_api.py backend/tests/integration/test_ml_training_e2e_api.py
