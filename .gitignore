@@ -19,3 +19,7 @@ graphify-out/*
 !graphify-out/GRAPH_REPORT.md
 !graphify-out/wiki/
 
+# Isolated worktrees and SDD scratch
+.worktrees/
+.superpowers/
+
